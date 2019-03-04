@@ -1,3 +1,4 @@
+# Copy audio recotds from asterisk server to windows Share folder
 #!/bin/bash
 read -p "Uvedit datu rozmovi napriklad 1021  dlya poshuku " date
 read -p "Uvedit nomer telefonu dlya poshuku " number
