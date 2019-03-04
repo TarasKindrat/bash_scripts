@@ -6,7 +6,7 @@ for file in *
    echo $file;
 done
    tar -cvzf files.tar.gz *
-# detele files.ter.gz olde 30 minutes  (-mmin +30 it is -mtime in minutes)
+# detele files.tar.gz olde 30 minutes  (-mmin +30 it is -mtime in minutes)
 find files.tar.gz -mmin +30 -exec rm -rf {} \;
 
 
