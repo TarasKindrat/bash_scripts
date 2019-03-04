@@ -3,13 +3,13 @@
 cd /var/log
  
 find . -type f -name "*" -print |
-  while read file
- do
+   while read file
+   do
 
 	if [ $(grep -irnw 'error|warn' $file | wc -l) -gt 0 ] # chek if is some errore or warn in file
 
             then
-      printf "\n" >> /home/taras/scripts/errors.txt
+              printf "\n" >> /home/taras/scripts/errors.txt
       
               echo $file >> /home/taras/scripts/errors.txt
       
@@ -25,5 +25,5 @@ find . -type f -name "*" -print |
     
            fi
 
-  done
+   done
 
