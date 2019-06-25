@@ -12,8 +12,9 @@ if [  $(find /asterisk/records/tvnet  -type f -name "*$date*$number*"| wc -l) -g
 
    cd $number                           # rename files, chench ":" to "_" in names, windows can't save name whis ":"    
    echo "Cheng simvol : to _ "
-   rename -v 's/:/_/' *wav
-   rename -v 's/:/_/' *wav
+   #rename -v 's/:/_/' *wav
+   #rename -v 's/:/_/' *wav
+   sed 's/:/_/g' *wav
    cd ..
 
    echo " mount at NAS/Asteriskrecords/"
