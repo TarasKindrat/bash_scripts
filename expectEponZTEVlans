@@ -1,0 +1,46 @@
+#!/usr/bin/expect -f
+#This script change defoult vlan for all Epon ONU what are connected to OLT  ZTE
+#in interfaces.txt must be listed interfaces in one column like: interface epon-onu_0/3/1:25
+
+# Set variables
+set HOST 0.0.0.0
+set vlan 20
+set USERNAME user
+set PASSWORD password
+set INTERFACE_DIRECTORY /home/Epon/interfaces.txt
+set file [exec cat $INTERFACE_DIRECTORY]
+
+# Open log file
+set fh [open /var/log/vlans.log a+]
+
+# Connect to host
+spawn /usr/bin/telnet $HOST
+
+# Start expects
+expect "*Username:*" {send "$USERNAME\r"
+puts $fh $expect_out(buffer)}
+expect "*Password:*" {send "$PASSWORD\r"
+puts $fh $expect_out(buffer)}
+expect "*#*" {send "configure terminal\r"
+puts $fh $expect_out(buffer)}
+
+# Run commands to change default vlan
+foreach line $file {
+  #puts "\n For test interface is $line"
+
+  expect "*(config)#*" {send "interface $line\r"
+  puts $fh $expect_out(buffer)} 
+  expect "*(config-if)#*" {send "no switchport default vlan\r"
+  puts $fh $expect_out(buffer)} 
+  expect "*(config-if)#*" {send "switchport default vlan $vlan vport 1\r"
+  puts $fh $expect_out(buffer)}
+  expect "*(config-if)#*" {send "exit\r"
+  puts $fh $expect_out(buffer)}
+}
+puts ""
+expect "*(config)#*" {send "exit\r"
+puts $fh $expect_out(buffer)}
+expect "*#*" {send "exit\r"}
+# close log file
+close $fh
+exit 0
