@@ -41,6 +41,7 @@ puts ""
 expect "*(config)#*" {send "exit\r"
 puts $fh $expect_out(buffer)}
 expect "*#*" {send "exit\r"}
+
 # close log file
 close $fh
 exit 0
