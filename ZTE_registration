@@ -11,7 +11,7 @@ set vlan [lindex $argv 3]
 #set file [exec cat $INTERFACE_DIRECTORY]
 
 # Open log file
-set fh [open /var/log/vlans.log a+]
+set fh [open /var/log/new_onu_register.log a+]
 
 # Off timeout
 set timeout -1 
