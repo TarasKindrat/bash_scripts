@@ -1,6 +1,5 @@
 #!/usr/bin/expect -f
-#This script change defoult vlan for all Epon ONU what are connected to OLT  ZTE
-#in interfaces.txt must be listed interfaces in one column like: interface epon-onu_0/3/1:25
+#This register new ONU and take from cmd like argv olt's IP, username, password end vlan  
 
 # Set variables
 set HOST [lindex $argv 0]
