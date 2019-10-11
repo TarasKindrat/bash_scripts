@@ -1,0 +1,101 @@
+#!/usr/bin/expect -f
+#This script change defoult vlan for all Epon ONU what are connected to OLT  ZTE
+#in interfaces.txt must be listed interfaces in one column like: interface epon-onu_0/3/1:25
+
+# Set variables
+set HOST [lindex $argv 0]
+set USERNAME [lindex $argv 1]
+set PASSWORD [lindex $argv 2]
+set vlan [lindex $argv 3]
+
+#set INTERFACE_DIRECTORY /home/Epon/interfaces.txt
+#set file [exec cat $INTERFACE_DIRECTORY]
+
+# Open log file
+set fh [open /var/log/vlans.log a+]
+
+# Off timeout
+set timeout -1 
+# Connect to host
+spawn /usr/bin/telnet $HOST
+
+# Start expects
+
+#while 1 { expect {
+#  "*Username:*"                     {send "$USERNAME\r" puts $fh $expect_out(buffer)}
+#  "*Password:*"                     {send "$PASSWORD\r" puts $fh $expect_out(buffer)}
+#  "*% No username or bad password*" {send_user "No username or bad password.\r"; exit 1 puts $fh $expect_out(buffer)}
+#  timeout                           {send_user "Connection timed out. Please chek IP addres of host ant retry.\r"; exit 2 puts $fh $expect_out(buffer)}
+#}}
+
+expect "*Username:*" {send "$USERNAME\r"
+puts $fh $expect_out(buffer)}
+expect "*Password:*" {send "$PASSWORD\r"
+puts $fh $expect_out(buffer)}
+expect "*#*" {send "show onu unauthentication\r"
+puts $fh $expect_out(buffer)}
+
+set values $expect_out(buffer)
+if { $values == " * 40529: No related information to show*" } {
+  send "exit\r" puts $fh $expect_out(buffer)
+}
+
+set interface [regexp {^epon-onu_.*:$} $values match]
+set macadres [regexp {MACAddress:.*} $values match]
+#set interface [split  [read $interface_sub] ":"]
+
+# Get information abount number of registered onu on current interface
+expect "*#*" {send "show running-config interface epon-olt_$interface\r" 
+puts $fh $expect_out(buffer)}
+set count 1
+foreach var $expect_out(buffer) {
+  incr count
+}
+expect "*#*" {send "configure terminal\r"
+puts $fh $expect_out(buffer)}
+
+# Add new ONU to interface
+expect "*(config)#*" {send "interface epon-olt_$interface\r"
+puts $fh $expect_out(buffer)} 
+expect "*(config-if)#*" {send "onu $count type EPON-ONU mac $macadres\r"
+puts $fh $expect_out(buffer)} 
+expect "*(config-if)#*" {send "exit\r"
+puts $fh $expect_out(buffer)}
+
+# Configuring ONU
+expect "*(config)#*" {send "interface epon-onu_$interface:$count\r"
+puts $fh $expect_out(buffer)} 
+expect "*(config-if)#*" {send "admin enable\r"
+puts $fh $expect_out(buffer)} 
+expect "*(config-if)#*" {send "ems-autocfg-request disable\r"
+puts $fh $expect_out(buffer)}
+expect "*(config-if)#*" {send "encrypt direction downstream  enable  vport 1\r"
+puts $fh $expect_out(buffer)}
+expect "*(config-if)#*" {send "switchport mode hybrid vport 1\r"
+puts $fh $expect_out(buffer)}
+expect "*(config-if)#*" {send "switchport default vlan $vlan vport 1\r"
+puts $fh $expect_out(buffer)}
+expect "*(config-if)#*" {send "exit\r"
+puts $fh $expect_out(buffer)}
+
+# Config ethernet port ONU
+expect "*(config)#*" {send "pon-onu-mng epon-onu_$interface:$count\r"
+puts $fh $expect_out(buffer)} 
+expect "*(epon-onu-mng)#*" {send " auto-config\r"
+puts $fh $expect_out(buffer)} 
+expect "*(epon-onu-mng)#*" {send "vlan port eth_0/1 mode transparent\r"
+puts $fh $expect_out(buffer)}
+expect "*(epon-onu-mng)#*" {send "interface-loopdetect eth_0/1 activate\r"
+puts $fh $expect_out(buffer)}
+expect "*(epon-onu-mng)#*" {send "exit\r"
+puts $fh $expect_out(buffer)}
+
+puts ""
+expect "*(config)#*" {send "exit\r"
+puts $fh $expect_out(buffer)}
+expect "*#*" {send "write\r"}
+expect "*#*" {send "exit\r"}
+
+# close log file
+close $fh
+exit 0
