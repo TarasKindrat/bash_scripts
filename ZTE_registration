@@ -1,5 +1,5 @@
 #!/usr/bin/expect -f
-#This register new ONU and take from cmd like argv olt's IP, username, password end vlan  
+#This register new ONU and take from cmd like argv olt's IP, username, password and vlan  
 
 # Set variables
 set HOST [lindex $argv 0]
