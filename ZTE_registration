@@ -73,7 +73,7 @@ expect "*(config-if)#*" {send "encrypt direction downstream  enable  vport 1\r"
 puts $fh $expect_out(buffer)}
 expect "*(config-if)#*" {send "switchport mode hybrid vport 1\r"
 puts $fh $expect_out(buffer)}
-expect "*(config-if)#*" {send "switchport default VLAN $VLAN vport 1\r"
+expect "*(config-if)#*" {send "switchport default vlan $VLAN vport 1\r"
 puts $fh $expect_out(buffer)}
 expect "*(config-if)#*" {send "exit\r"
 puts $fh $expect_out(buffer)}
@@ -83,7 +83,7 @@ expect "*(config)#*" {send "pon-onu-mng epon-onu_$INTERFACE:$COUNT\r"
 puts $fh $expect_out(buffer)} 
 expect "*(epon-onu-mng)#*" {send " auto-config\r"
 puts $fh $expect_out(buffer)} 
-expect "*(epon-onu-mng)#*" {send "VLAN port eth_0/1 mode transparent\r"
+expect "*(epon-onu-mng)#*" {send "vlan port eth_0/1 mode transparent\r"
 puts $fh $expect_out(buffer)}
 expect "*(epon-onu-mng)#*" {send "interface-loopdetect eth_0/1 activate\r"
 puts $fh $expect_out(buffer)}
