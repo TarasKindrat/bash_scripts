@@ -17,7 +17,7 @@ if {
    find /var/vmail/name.domen.com/ -type d -name courierimapkeywords -exec rm -Rf {} \;    
  
  }
-  then echo " job done all is delitetd" 
+  then echo " job done all are deleted" 
   fi   ;;
    
    n)
