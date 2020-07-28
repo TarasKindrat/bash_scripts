@@ -1,5 +1,5 @@
 #!/bin/bash
-read -p "Vill be deliting old Courier files y / n? " res
+read -p "Will be deleting old Courier files y / n? " res
  
  case $res in
   y) 
